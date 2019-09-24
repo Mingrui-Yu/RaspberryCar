@@ -1,3 +1,4 @@
+#  Ultrasonic ranging module
 
 import RPi.GPIO as GPIO
 import time
@@ -5,29 +6,28 @@ import time
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
 
-
   
 class CarUltrasound(object):
     def __init__(self):
 
-        self.GPIO_TRIGGER = 20
+        self.GPIO_TRIGGER = 20  # GPIO setting (BCM coding)
         self.GPIO_ECHO = 21
 
-        GPIO.setup(self.GPIO_TRIGGER, GPIO.OUT)
+        GPIO.setup(self.GPIO_TRIGGER, GPIO.OUT)  # GPIO input/output definiation
         GPIO.setup(self.GPIO_ECHO, GPIO.IN)
   
-    def disMeasure(self):
-        GPIO.output(self.GPIO_TRIGGER, False)
+    def disMeasure(self):  # distance measuing 
+        GPIO.output(self.GPIO_TRIGGER, False) 
         time.sleep(0.000002)
-        GPIO.output(self.GPIO_TRIGGER, True)
-        time.sleep(0.00001)
-        GPIO.output(self.GPIO_TRIGGER, False)
+        GPIO.output(self.GPIO_TRIGGER, True)  # emit ultrasonic pulse
+        time.sleep(0.00001)                   # last 10ms
+        GPIO.output(self.GPIO_TRIGGER, False) # end the pulse
 
-        while GPIO.input(self.GPIO_ECHO) == 0:
+        while GPIO.input(self.GPIO_ECHO) == 0:  # when the pulse is emitted, ECHO will become 1
             pass
         start_time = time.time()
 
-        while GPIO.input(self.GPIO_ECHO) == 1:
+        while GPIO.input(self.GPIO_ECHO) == 1:  # when it receives the echo, ECHO will become 0
             pass
         stop_time = time.time()
     

@@ -1,23 +1,25 @@
 import RPi.GPIO as GPIO
 import time
-from run import CarRun
+
+from move import CarMove
 from ultrasound import CarUltrasound
 from infrared import CarInfrared
 
-GPIO.setwarnings(False)
-GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)  # Disable warning
+GPIO.setmode(GPIO.BCM)  # BCM coding 
 
-class Car(CarRun, CarUltrasound, CarInfrared):
+class Car(CarMove, CarUltrasound, CarInfrared):  # create class Car, which derives all the modules
     def __init__(self):
-        CarRun.__init__(self)
+        CarMove.__init__(self)
         CarUltrasound.__init__(self)
         CarInfrared.__init__(self)
 
 
 if __name__ == '__main__':
     try:
-        car = Car()
-        car.motor_1.start(0)
+        car = Car() 
+
+        car.motor_1.start(0)  # motors start
         car.motor_4.start(0)
         car.motor_5.start(0)
         car.motor_6.start(0)
@@ -28,7 +30,7 @@ if __name__ == '__main__':
             dist = car.disMeasure()
             dist_list.append(dist)
             if len(dist_list) > 5:  dist_list.pop(0)
-            dist_ave = sum(dist_list)/len(dist_list)
+            dist_ave = sum(dist_list)/len(dist_list)  # For error reduction, using the moving average of distance measured by ultrasonic module 
             print('Distance', dist_ave)
 
             [left_measure, right_measure] = car.InfraredMeasure()
