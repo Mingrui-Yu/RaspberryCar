@@ -9,11 +9,13 @@ class CarInfrared(object):
     def __init__(self):
         self.GPIO_Infrared_right = 8
         self.GPIO_Infrared_left = 7
+
         self.GPIO_left_tracking = 16
         self.GPIO_right_tracking = 12
 
         GPIO.setup(self.GPIO_Infrared_right, GPIO.IN)
         GPIO.setup(self.GPIO_Infrared_left, GPIO.IN)
+
         GPIO.setup(self.GPIO_left_tracking, GPIO.IN)
         GPIO.setup(self.GPIO_right_tracking, GPIO.IN)
 

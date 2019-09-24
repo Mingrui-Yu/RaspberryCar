@@ -1,15 +1,16 @@
 import RPi.GPIO as GPIO
 import time
-from run import CarRun
+
+from move import CarMove
 from infrared import CarInfrared
 from enum import Enum
 
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
 
-class Car(CarRun, CarInfrared):
+class Car(CarMove, CarInfrared):
     def __init__(self):
-        CarRun.__init__(self)
+        CarMove.__init__(self)
         CarInfrared.__init__(self)
 
 class STATUS(Enum):
