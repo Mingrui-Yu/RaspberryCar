@@ -1,32 +1,22 @@
-<<<<<<< HEAD
 # Infrared obstacle avoidance module
 
-=======
->>>>>>> eb99d96cd7d4957c47f2575f59f68723fe92f08f
 import RPi.GPIO as GPIO
 import time
 
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
 
-<<<<<<< HEAD
   
-=======
 
->>>>>>> eb99d96cd7d4957c47f2575f59f68723fe92f08f
 class CarInfrared(object):
     def __init__(self):
         self.GPIO_Infrared_right = 8  # GPIO setting (BCM coding)
         self.GPIO_Infrared_left = 7
 
-<<<<<<< HEAD
-        GPIO.setup(self.GPIO_Infrared_right, GPIO.IN)  # GPIO input/output definiation
-=======
         self.GPIO_left_tracking = 16
         self.GPIO_right_tracking = 12
 
         GPIO.setup(self.GPIO_Infrared_right, GPIO.IN)
->>>>>>> eb99d96cd7d4957c47f2575f59f68723fe92f08f
         GPIO.setup(self.GPIO_Infrared_left, GPIO.IN)
 
         GPIO.setup(self.GPIO_left_tracking, GPIO.IN)
