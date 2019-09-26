@@ -12,13 +12,22 @@ opencv 3.4.3  [How to install](https://github.com/Mingrui-Yu/Tutorials/blob/mast
 ### Obstacle avoidance
 Enter the following commands in Terminal:
 ```
-sudo python3 main_test.py
+sudo python3 ./PythonCode/main_test.py
 ```
 Has been tested.
 
 ### Tracking
 Enter the following commands in Terminal:
 ```
-sudo python3 trace_test.py
+sudo python3 ./PythonCode/trace_test.py
 ```
 循迹传感器可以正常工作，寻迹逻辑还未进行测试
+
+### Video recording
+Enter the following commands in Terminal:
+```
+sudo python3 ./PythonCode/camera.py
+```
+NOTICE: Press "q" to quit. (Necessary!)
+
+Has been tested.
