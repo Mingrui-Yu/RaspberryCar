@@ -1,4 +1,4 @@
-﻿# Environment
+﻿## Environment
 python 3
 
 RPi.GPIO
@@ -6,15 +6,15 @@ RPi.GPIO
 picamera
 
 
-# Run
-## Obstacle avoidance
+## Run
+### Obstacle avoidance
 Enter the following commands in Terminal:
 ```
 sudo python3 main_test.py
 ```
 Has been tested.
 
-## Tracking
+### Tracking
 Enter the following commands in Terminal:
 ```
 sudo python3 trace_test.py
