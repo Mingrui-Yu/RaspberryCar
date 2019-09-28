@@ -25,24 +25,31 @@ class CarCamera(object):
 
  
 if __name__ == '__main__':
-    cam = CarCamera()
+    try:
+        cam = CarCamera()
 
-    for frame in cam.VideoRecording():
-        image = frame.array  # grab the raw NumPy array representing the image, then initialize the timestamp
+        for frame in cam.VideoRecording():
+            image = frame.array  # grab the raw NumPy array representing the image, then initialize the timestamp
 
-        # show the frame
-        cv2.imshow("Frame", image)
-        # 如果没有下列命令，则下次camera无法正常打开
-        key = cv2.waitKey(1) & 0xFF # 按下任意按键返回（按下按键时，焦点要在图像窗口上）
+            # show the frame
+            # cv2.imshow("Frame", image)
+            print("Image---")
+            # 如果没有下列命令，则下次camera无法正常打开
+            key = cv2.waitKey(1) & 0xFF # 按下任意按键返回（按下按键时，焦点要在图像窗口上）
 
-        # clear the stream in preparation for the next frame
+            # clear the stream in preparation for the next frame
+            cam.rawCapture.truncate(0)
+
+            # if the `q` key was pressed, break from the loop
+            if key == ord("q"):
+                break
+
+        cv2.destroyAllWindows()
+
+    except KeyboardInterrupt:
+        cv2.waitKey(1)
         cam.rawCapture.truncate(0)
-
-        # if the `q` key was pressed, break from the loop
-        if key == ord("q"):
-            break
-
-    cv2.destroyAllWindows()
+        cv2.destroyAllWindows()
 
 
 
