@@ -4,7 +4,7 @@ import socket
 import struct
 
 HOST='192.168.12.60'
-PORT=9999
+PORT = 8000
 
 server=socket.socket(socket.AF_INET,socket.SOCK_DGRAM) #socket对象
 server.connect((HOST,PORT))
@@ -15,11 +15,14 @@ try:
         success,frame=capture.read()
         while not success and frame is None:
             success,frame=capture.read()  #获取视频帧
-            print('fail')
+            print('fail to capture image')
         result,imgencode=cv2.imencode('.jpg',frame,[cv2.IMWRITE_JPEG_QUALITY,50])  #编码
-        server.sendall(struct.pack('i',imgencode.shape[0])) #发送编码后的字节长度，这个值不是固定的
-        server.sendall(imgencode) #发送视频帧数据
-        print('have sent one frame')
+        try:
+            server.sendall(struct.pack('i',imgencode.shape[0])) #发送编码后的字节长度，这个值不是固定的
+            server.sendall(imgencode) #发送视频帧数据
+            print('have sent one frame')
+        except:
+            print('fail to send the frame')
         
 except Exception as e:
     print(e)

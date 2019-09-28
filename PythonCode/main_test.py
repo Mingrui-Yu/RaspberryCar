@@ -4,20 +4,23 @@ import time
 from move import CarMove
 from ultrasound import CarUltrasound
 from infrared import CarInfrared
+from camera import CarCamera
 
 GPIO.setwarnings(False)  # Disable warning
 GPIO.setmode(GPIO.BCM)  # BCM coding 
 
-class Car(CarMove, CarUltrasound, CarInfrared):  # create class Car, which derives all the modules
+class Car(CarMove, CarUltrasound, CarInfrared, CarCamera):  # create class Car, which derives all the modules
     def __init__(self):
         CarMove.__init__(self)
         CarUltrasound.__init__(self)
         CarInfrared.__init__(self)
+        CarCamera.__init__(self)
 
 
 if __name__ == '__main__':
     try:
         car = Car() 
+        i_frame = 0
 
         car.motor_1.start(0)  # motors start
         car.motor_4.start(0)
@@ -27,6 +30,7 @@ if __name__ == '__main__':
         dist_list = []
 
         while True:
+            # perception
             dist = car.disMeasure()
             dist_list.append(dist)
             if len(dist_list) > 5:  dist_list.pop(0)
@@ -35,6 +39,10 @@ if __name__ == '__main__':
 
             [left_measure, right_measure] = car.InfraredMeasure()
 
+            frame = car.VideoRecording()
+            car.VideoTransmission(frame)
+
+            # decison-making
             if left_measure == 0 and right_measure == 1:
                 print("Going right")
                 car.right(80)
@@ -59,3 +67,4 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         print("Measurement stopped by User")
         GPIO.cleanup()
+        car.CameraCleanup()
