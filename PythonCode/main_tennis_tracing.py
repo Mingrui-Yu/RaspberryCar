@@ -31,6 +31,7 @@ if __name__ == '__main__':
 
         VideoReturn = True
         dist_list = []
+        tennis_pos = []
         i_frame = 0
 
         car.brake()
@@ -57,12 +58,25 @@ if __name__ == '__main__':
                 car.VideoTransmission(frame_detect)
             else:
                 x_pos, y_pos, radius = car.TennisDetect(frame_origin, VideoReturn)
-                car.VideoTransmission(frame_origin)
-
-            print('x:', x_pos, ' y:', y_pos, ' r:', radius)
+                # car.VideoTransmission(frame_origin)
 
 
-            
+            #### under testing ####
+            tennis_pos.append(x_pos)
+            if len(tennis_pos) > 5:  dist_list.pop(0)
+
+            print('frame:', i_frame, ' x:', x_pos, ' y:', y_pos, ' r:', radius)
+
+            if x_pos == 0:
+                car.brake()
+            elif x_pos > 420:
+                car.right(60)
+            elif x_pos < 220:
+                car.left(60)
+            else:
+                car.brake()
+            #### under testing ####
+
 
     except KeyboardInterrupt:
         print("Measurement stopped by User")
