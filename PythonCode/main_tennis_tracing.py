@@ -18,6 +18,11 @@ class Car(CarMove, CarUltrasound, CarInfrared, CarCamera, CarDetect):  # create 
         CarInfrared.__init__(self)
         CarCamera.__init__(self)
         CarDetect.__init__(self)
+    
+    def AllStop(self):
+        CarMove.MotorStop()
+        CarCamera.Cleanup()
+        GPIO.cleanup()
 
 
 if __name__ == '__main__':
@@ -61,5 +66,4 @@ if __name__ == '__main__':
 
     except KeyboardInterrupt:
         print("Measurement stopped by User")
-        GPIO.cleanup()
-        car.CameraCleanup()
+        car.AllStop()

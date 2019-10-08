@@ -61,18 +61,21 @@ class CarMove(object):
         self.motor_5.ChangeDutyCycle(0)
         self.motor_6.ChangeDutyCycle(0)
 
+    def MotorStop():
+        self.motor_1.stop()
+        self.motor_4.stop()
+        self.motor_5.stop()
+        self.motor_6.stop()
+
 
 if __name__ == '__main__':
     try:
         car = CarMove()
-        car.motor_1.start(0)
-        car.motor_4.start(0)
-        car.motor_5.start(0)
-        car.motor_6.start(0)
         while(True):
             car.forward(50)
 
     except KeyboardInterrupt:
         print("Measurement stopped by User")
+        car.MotorStop()
         GPIO.cleanup()
 
