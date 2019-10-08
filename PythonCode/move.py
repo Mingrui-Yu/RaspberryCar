@@ -26,6 +26,11 @@ class CarMove(object):
         self.motor_5 = GPIO.PWM(GPIO_motor_5, 500)
         self.motor_6 = GPIO.PWM(GPIO_motor_6, 500)
 
+        self.motor_1.start(0)  # motors start
+        self.motor_4.start(0)
+        self.motor_5.start(0)
+        self.motor_6.start(0)
+
     def forward(self, speed):
         self.motor_1.ChangeDutyCycle(speed)  # set the duty circle (range: 0~100)
         self.motor_4.ChangeDutyCycle(0)

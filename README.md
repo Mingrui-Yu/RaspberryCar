@@ -39,7 +39,7 @@ Based on ultrasonic sensor and infrared sensors.
 
 Enter the following commands in Pi Terminal:
 ```
-sudo python3 ./PythonCode/main_test.py
+sudo python3 ./PythonCode/main_obstacle_avoidance.py
 ```
 Has been tested.
 
@@ -48,7 +48,7 @@ Based on infrared sensors.
 
 Enter the following commands in Pi Terminal:
 ```
-sudo python3 ./PythonCode/trace_test.py
+sudo python3 ./PythonCode/main_trace_test.py
 ```
 循迹传感器可以正常工作，寻迹逻辑还未进行测试
 
@@ -63,5 +63,17 @@ sudo python3 ./PythonCode/pc_reciever.py
 ```
 
 Has been tested.
+
+### Tennis Tracing
+The car will first detect the tennis based on its camera (finished and tested), then it will move to trace the tennis (work in next).
+
+Enter the following commands in Pi Terminal:
+```
+sudo python3 ./PythonCode/main_tennis_tracing.py
+```
+Besides, if you want to watch the video with the detected result from PC, then enter the following commands in PC Terminal:
+```
+sudo python3 ./PythonCode/pc_reciever.py
+```
 
  

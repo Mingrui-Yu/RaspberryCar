@@ -20,14 +20,11 @@ class Car(CarMove, CarUltrasound, CarInfrared, CarCamera):  # create class Car, 
 if __name__ == '__main__':
     try:
         car = Car() 
+
         i_frame = 0
-
-        car.motor_1.start(0)  # motors start
-        car.motor_4.start(0)
-        car.motor_5.start(0)
-        car.motor_6.start(0)
-
         dist_list = []
+
+        car.brake()
 
         while True:
             # perception

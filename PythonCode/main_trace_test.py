@@ -22,10 +22,7 @@ class STATUS(Enum):
 if __name__ == '__main__':
     try:
         car = Car()
-        car.motor_1.start(0)
-        car.motor_4.start(0)
-        car.motor_5.start(0)
-        car.motor_6.start(0)
+        car.brake()
 
         status = STATUS.STRAIGHT
         
