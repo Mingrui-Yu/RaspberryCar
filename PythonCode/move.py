@@ -61,7 +61,7 @@ class CarMove(object):
         self.motor_5.ChangeDutyCycle(0)
         self.motor_6.ChangeDutyCycle(0)
 
-    def MotorStop():
+    def MotorStop(self):
         self.motor_1.stop()
         self.motor_4.stop()
         self.motor_5.stop()

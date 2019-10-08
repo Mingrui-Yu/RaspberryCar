@@ -17,8 +17,8 @@ class Car(CarMove, CarUltrasound, CarInfrared, CarCamera):  # create class Car, 
         CarCamera.__init__(self)
     
     def AllStop(self):
-        CarMove.MotorStop()
-        CarCamera.Cleanup()
+        CarMove.MotorStop(self)
+        CarCamera.CameraCleanup(self)
         GPIO.cleanup()
 
 
