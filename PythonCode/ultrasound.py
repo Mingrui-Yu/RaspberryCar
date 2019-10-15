@@ -22,24 +22,19 @@ class CarUltrasound(object):
         GPIO.output(self.GPIO_TRIGGER, False) 
         time.sleep(0.000002)
         GPIO.output(self.GPIO_TRIGGER, True)  # emit ultrasonic pulse
-        time.sleep(0.00001)                   # last 10ms
+        time.sleep(0.00001)                   # last 10us
         GPIO.output(self.GPIO_TRIGGER, False) # end the pulse
-        ii = 0
 
-        while GPIO.input(self.GPIO_ECHO) == 0:  # when the pulse is emitted, ECHO will become 1
+        ii = 0
+        while GPIO.input(self.GPIO_ECHO) == 0:  # when receiving the echo, ECHO will become 1
             ii = ii + 1
-            if ii > 1000: 
-                print('Ultrasound error 1: the pulse has been emitted, but Echo has not become 1')
+            if ii > 10000: 
+                print('Ultrasound error: the sensor missed the echo')
                 return 0
             pass
         start_time = time.time()
 
-        while GPIO.input(self.GPIO_ECHO) == 1:  # when it receives the echo, ECHO will become 0
-            current_time = time.time()
-            if current_time - start_time > 0.3:
-                print('Ultrasound error 2: the sensor missed the echo')
-                break
-            else:
+        while GPIO.input(self.GPIO_ECHO) == 1:  # the duration of high level of ECHO is the time between the emitting the pulse and receiving the echo
                 pass
         stop_time = time.time()
     
@@ -50,8 +45,11 @@ class CarUltrasound(object):
 
     def DistMeasureMovingAverage(self):
         dist_current = self.DistMeasure()
-        self.dist_mov_ave = 0.1*dist_current + 0.9*self.dist_mov_ave
-        return self.dist_mov_ave
+        if dist_current == 0:  # if the sensor missed the echo, the output dis_mov_ave will equal the last dis_mov_ave
+            return self.dist_mov_ave
+        else:
+            self.dist_mov_ave = 0.8*dist_current + 0.2*self.dist_mov_ave  # using the moving average of distance measured by sensor to reduce the error
+            return self.dist_mov_ave
 
   
 

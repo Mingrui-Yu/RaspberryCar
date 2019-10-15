@@ -25,6 +25,7 @@ class Car(CarMove, CarUltrasound, CarInfrared, CarCamera):  # create class Car, 
 if __name__ == '__main__':
     try:
         car = Car() 
+        start_time = None
 
         while True:
             # perception
@@ -37,23 +38,29 @@ if __name__ == '__main__':
             car.VideoTransmission(frame)
 
             # decison-making
-            if left_measure == 0 and right_measure == 1:
-                print("Going right")
-                car.right(80)
-            elif left_measure == 1 and right_measure == 0:
-                print("Going left")
-                car.left(80)
-            elif left_measure == 0 and right_measure == 0:
-                print("Going back")
-                car.back(50)
-            else:
-                if dist_mov_ave < 30:
+
+            if (start_time is None) or (time.time() - start_time >  0.5):
+                start_time = None
+                if left_measure == 0 and right_measure == 1:
+                    print("Going right")
+                    car.right(80)
+                elif left_measure == 1 and right_measure == 0:
+                    print("Going left")
                     car.left(80)
-                    time.sleep(1)
-                elif dist_mov_ave < 100:
-                    car.forward(dist_mov_ave/2 + 40)
+                elif left_measure == 0 and right_measure == 0:
+                    print("Going back")
+                    car.back(50)
                 else:
-                    car.forward(90)
+                    if dist_mov_ave < 20:
+                        car.left(80)
+                        print("Going left")
+                        start_time = time.time()
+                    elif dist_mov_ave < 100:
+                        car.forward(dist_mov_ave/2 + 40)
+                    else:
+                        car.forward(90)
+            else:
+                pass
 
 
 
