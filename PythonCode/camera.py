@@ -27,7 +27,7 @@ class CarCamera(object):
 
 
     def VideoTransmission(self, frame):  # transmit video from Pi to PC
-        result, imgencode = cv2.imencode('.jpg', frame, [cv2.IMWRITE_JPEG_QUALITY,50])  #编码
+        result, imgencode = cv2.imencode('.jpg', frame, [cv2.IMWRITE_JPEG_QUALITY, 10])  #编码
         try:
             self.server.sendall(struct.pack('i',imgencode.shape[0]))  # 发送数据长度作为校验
             self.server.sendall(imgencode)

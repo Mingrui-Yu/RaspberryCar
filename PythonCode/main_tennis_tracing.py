@@ -40,15 +40,6 @@ if __name__ == '__main__':
             i_frame = i_frame + 1
 
             ##### perception ######
-            # ultrasonic sensing
-            dist = car.disMeasure()
-            dist_list.append(dist)
-            if len(dist_list) > 5:  dist_list.pop(0)
-            dist_ave = sum(dist_list)/len(dist_list)  # For error reduction, using the moving average of distance measured by ultrasonic module 
-            # print('Distance', dist_ave)
-
-            # infrared sensing
-            [left_measure, right_measure] = car.InfraredMeasure()
 
             # camera sensing
             frame_origin = car.VideoRecording()
@@ -60,22 +51,31 @@ if __name__ == '__main__':
                 x_pos, y_pos, radius = car.TennisDetect(frame_origin, VideoReturn)
                 # car.VideoTransmission(frame_origin)
 
-
-            #### under testing ####
-            tennis_pos.append(x_pos)
-            if len(tennis_pos) > 5:  dist_list.pop(0)
-
             print('frame:', i_frame, ' x:', x_pos, ' y:', y_pos, ' r:', radius)
 
-            if x_pos == 0:
-                car.brake()
-            elif x_pos > 420:
-                car.right(60)
-            elif x_pos < 220:
-                car.left(60)
-            else:
-                car.brake()
-            #### under testing ####
+            # if radius == 0:
+            #     car.brake()
+            # elif radius < 30:
+            #     car.forward(30)
+            # elif radius > 50:
+            #     car.back(30)
+            # else:
+            #     car.brake()
+
+
+            # #### under testing ####
+            # tennis_pos.append(x_pos)
+            # if len(tennis_pos) > 5:  dist_list.pop(0)
+
+            # if x_pos == 0:
+            #     car.brake()
+            # elif x_pos > 420:
+            #     car.right(60)
+            # elif x_pos < 220:
+            #     car.left(60)
+            # else:
+            #     car.brake()
+            # #### under testing ####
 
 
     except KeyboardInterrupt:

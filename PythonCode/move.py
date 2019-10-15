@@ -31,6 +31,7 @@ class CarMove(object):
         self.motor_5.start(0)
         self.motor_6.start(0)
 
+
     def forward(self, speed):
         self.motor_1.ChangeDutyCycle(speed)  # set the duty circle (range: 0~100)
         self.motor_4.ChangeDutyCycle(0)

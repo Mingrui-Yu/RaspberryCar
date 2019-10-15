@@ -26,18 +26,10 @@ if __name__ == '__main__':
     try:
         car = Car() 
 
-        i_frame = 0
-        dist_list = []
-
-        car.brake()
-
         while True:
             # perception
-            dist = car.disMeasure()
-            dist_list.append(dist)
-            if len(dist_list) > 5:  dist_list.pop(0)
-            dist_ave = sum(dist_list)/len(dist_list)  # For error reduction, using the moving average of distance measured by ultrasonic module 
-            print('Distance', dist_ave)
+            dist_mov_ave = car.DistMeasureMovingAverage()
+            print('Distance', dist_mov_ave)
 
             [left_measure, right_measure] = car.InfraredMeasure()
 
@@ -55,11 +47,11 @@ if __name__ == '__main__':
                 print("Going back")
                 car.back(50)
             else:
-                if dist_ave < 15:
+                if dist_mov_ave < 30:
                     car.left(80)
                     time.sleep(1)
-                elif dist_ave < 100:
-                    car.forward(dist_ave/2 + 40)
+                elif dist_mov_ave < 100:
+                    car.forward(dist_mov_ave/2 + 40)
                 else:
                     car.forward(90)
 
