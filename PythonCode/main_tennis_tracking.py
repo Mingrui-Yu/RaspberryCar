@@ -11,7 +11,7 @@ from move import CarMove
 from ultrasound import CarUltrasound
 from infrared import CarInfrared
 from camera import CarCamera
-from detect import CarDetect
+from detect_new import CarDetect
 
 GPIO.setwarnings(False)  # Disable warning
 GPIO.setmode(GPIO.BCM)  # BCM coding 
@@ -35,15 +35,16 @@ if __name__ == '__main__':
     try:
         car = Car() 
 
-        VideoReturn = True
-        dist_list = []
-        tennis_pos = []
+        VideoReturn = True  #  return the detected_frame, and transmit the frames to PC
+        radius_mov_ave = 35
+        x_mov_ave = 320
 
         camera, rawCapture = car.CameraInit()  # Initialize the PiCamera
+
         for raw_frame in camera.capture_continuous(rawCapture, format="bgr",use_video_port=True):
             t_start = time.time()  # 用来计算FPS
 
-            frame_origin = np.copy(raw_frame.array)
+            frame_origin = raw_frame.array
             
             if VideoReturn:  # detect the tennis & transmit the frames to PC
                 frame_detect, x_pos, y_pos, radius = car.TennisDetect(frame_origin, VideoReturn)
@@ -52,29 +53,56 @@ if __name__ == '__main__':
                 x_pos, y_pos, radius = car.TennisDetect(frame_origin, VideoReturn)
                 # car.VideoTransmission(frame_origin)
 
-            # if radius == 0:
-            #     car.brake()
-            # elif radius < 30:
-            #     car.forward(30)
-            # elif radius > 50:
-            #     car.back(30)
-            # else:
-            #     car.brake()
+            # print('x: ', x_pos ,'  y: ', y_pos, '  r: ', radius)
+
+            if radius == 0:  # radius ==0 means it hasn't found the tennis
+                pass
+            else:
+                radius_mov_ave = 0.2*radius + 0.8*radius_mov_ave  # use the moving average  to reduce the error
+                x_mov_ave = 0.2*x_pos + 0.8*x_mov_ave
 
 
-            # #### under testing ####
-            # tennis_pos.append(x_pos)
-            # if len(tennis_pos) > 5:  dist_list.pop(0)
+            ##### decision making #####
+            if radius == 0:
+                ForB = 'Brake'
+            elif radius_mov_ave < 30:
+                ForB = 'Forward'
+            elif radius_mov_ave > 40:
+                ForB = 'Backward'
+            else:
+                ForB = 'Brake'
 
-            # if x_pos == 0:
-            #     car.brake()
-            # elif x_pos > 420:
-            #     car.right(60)
-            # elif x_pos < 220:
-            #     car.left(60)
-            # else:
-            #     car.brake()
-            # #### under testing ####
+            if x_pos == 0:
+                LorR = 'Brake'
+            elif x_mov_ave > 420: 
+                LorR = 'Right'
+            elif x_mov_ave < 220: 
+                LorR = 'Left'
+            else: 
+                LorR = 'Brake'
+
+            if ForB is 'Brake':
+                if LorR is 'Left':
+                    car.left(60)
+                elif LorR is 'Right':
+                    car.right(60)
+                elif LorR is 'Brake':
+                    car.brake()
+            elif ForB is 'Forward':
+                if LorR is 'Left':
+                    car.left(60)
+                elif LorR is 'Right':
+                    car.right(60)
+                elif LorR is 'Brake':
+                    car.forward(40)
+            elif ForB is 'Backward':
+                if LorR is 'Left':
+                    car.left(60)
+                elif LorR is 'Right':
+                    car.right(60)
+                elif LorR is 'Brake':
+                    car.back(40)
+
 
             rawCapture.truncate(0)  # PiCamera必备
             

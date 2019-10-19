@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import copy
+import time
 
 class CarDetect(object):
     def __init__(self):
@@ -17,9 +18,9 @@ class CarDetect(object):
         (h_img, s_img, v_img) = cv2.split(hsv_img)
 
         gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)  # rgb to gray
-        dst_img = cv2.equalizeHist(gray_img)  # hist equalization
+        # gray_img = cv2.equalizeHist(gray_img)  # hist equalization
 
-        circles = cv2.HoughCircles(dst_img, cv2.HOUGH_GRADIENT, 1, 120, param1=100, param2=20, minRadius=15, maxRadius=50)  # HOUGH circle detection
+        circles = cv2.HoughCircles(gray_img, cv2.HOUGH_GRADIENT, 1, 120, param1=100, param2=20, minRadius=15, maxRadius=60)  # HOUGH circle detection
 
         if circles is not None:  
             x = circles[0][:, 0].astype(int)  # extract the x, y, r of all detected circles
@@ -28,7 +29,7 @@ class CarDetect(object):
             s_r = (r/1.5).astype(int)  
 
             num = circles[0].shape[0]
-            distance = np.zeros(num)
+            distance = np.ones(num) * 100
             mean_h = np.zeros(num)
             mean_s = np.zeros(num)
 
@@ -36,22 +37,27 @@ class CarDetect(object):
                 detect_area_h = (h_img[y[i]-s_r[i]: y[i]+s_r[i], x[i]-s_r[i]:x[i]+s_r[i]])  # A square in the detected circle (H)
                 detect_area_s = (s_img[y[i]-s_r[i]: y[i]+s_r[i], x[i]-s_r[i]:x[i]+s_r[i]])  # A square in the detected circle (S)
 
-                mean_h[i] = np.mean(detect_area_h)
-                mean_s[i] = np.mean(detect_area_s)
-
                 # Through 33 photos of the tennis captured by Raspberry Camera, we find the average H of tennis areas is 36, the average S of tennis areas is 163, and the var of H is much smaller than that of S.
-                distance[i] = np.sqrt(0.98*(mean_h[i] - 36)**2 + 0.02*(mean_s[i] - 163)**2) 
+                if len(detect_area_h):
+                    num_point =  detect_area_h[detect_area_h > 30 and detect_area_h < 40]
+                    # height, width = detect_area_h.shape
+                    # rate = num_point / (height*width)
+                    # print('rate',  rate)
+                    mean_h[i] = np.mean(detect_area_h)
+                    mean_s[i] = np.mean(detect_area_s)
+                    distance[i] = np.sqrt(0.98*(mean_h[i] - 35)**2 + 0.02*(mean_s[i] - 163)**2) 
                 
             i = np.argmin(distance)  # select the circle with the minimum distance as the detected tennis
-            if distance[i] < 15:   # if distance > 15, the selected circle cannot be a tennis
-                SuccessfulDetect = True
+            if distance[i] < 20:   # if distance > 15, the selected circle cannot be a tennis
                 x_pos = x[i]
                 y_pos = y[i]
                 radius = r[i]
+            print('x: ', x[i], '  y: ', y[i], '  r: ', r[i], '   distance: ', distance[i], '  mean_h:', mean_h[i], '  mean_s:', mean_s[i])
+
 
         if VideoReturn:  # if it needs to return the frame with the detected tennis
             img_out = copy.copy(img)
-            img_out = cv2.circle(img_out, (x_pos, y_pos), radius, (0,0,255), 1, 8, 0)
+            img_out = cv2.circle(img_out, (x_pos, y_pos), radius, (0,0,255), thickness=10)
             return img_out, x_pos, y_pos, radius
         else:  # if it only needs to return the position of the detected tennis
             return x_pos, y_pos, radius
