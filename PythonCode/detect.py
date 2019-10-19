@@ -1,15 +1,13 @@
 import cv2
 import numpy as np
 import copy
-from matplotlib import pyplot as plt
 
 class CarDetect(object):
     def __init__(self):
         pass
 
 
-    def TennisDetect(self, img, VideoReturn):  
-        SuccessfulDetect = False
+    def TennisDetect(self, img, VideoReturn):   # 检测网球（利用霍夫圆检测和HSV色彩检测）
         x_pos = 0  # initialize the tennis's position
         y_pos = 0
         radius = 0
@@ -57,6 +55,9 @@ class CarDetect(object):
             return img_out, x_pos, y_pos, radius
         else:  # if it only needs to return the position of the detected tennis
             return x_pos, y_pos, radius
+
+
+
 
 
 if __name__ == '__main__':

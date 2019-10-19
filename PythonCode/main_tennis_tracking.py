@@ -1,5 +1,11 @@
 import RPi.GPIO as GPIO
 import time
+import cv2
+import numpy as np
+import time
+
+from picamera.array import PiRGBArray
+from picamera import PiCamera
 
 from move import CarMove
 from ultrasound import CarUltrasound
@@ -32,17 +38,12 @@ if __name__ == '__main__':
         VideoReturn = True
         dist_list = []
         tennis_pos = []
-        i_frame = 0
 
-        car.brake()
+        camera, rawCapture = car.CameraInit()  # Initialize the PiCamera
+        for raw_frame in camera.capture_continuous(rawCapture, format="bgr",use_video_port=True):
+            t_start = time.time()  # 用来计算FPS
 
-        while True:
-            i_frame = i_frame + 1
-
-            ##### perception ######
-
-            # camera sensing
-            frame_origin = car.VideoRecording()
+            frame_origin = np.copy(raw_frame.array)
             
             if VideoReturn:  # detect the tennis & transmit the frames to PC
                 frame_detect, x_pos, y_pos, radius = car.TennisDetect(frame_origin, VideoReturn)
@@ -50,8 +51,6 @@ if __name__ == '__main__':
             else:
                 x_pos, y_pos, radius = car.TennisDetect(frame_origin, VideoReturn)
                 # car.VideoTransmission(frame_origin)
-
-            print('frame:', i_frame, ' x:', x_pos, ' y:', y_pos, ' r:', radius)
 
             # if radius == 0:
             #     car.brake()
@@ -76,6 +75,12 @@ if __name__ == '__main__':
             # else:
             #     car.brake()
             # #### under testing ####
+
+            rawCapture.truncate(0)  # PiCamera必备
+            
+            mfps = 1 / (time.time() - t_start)  # 计算FPS
+            print('FPS: ', mfps)
+            
 
 
     except KeyboardInterrupt:

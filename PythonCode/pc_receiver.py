@@ -5,12 +5,9 @@ import struct
 import copy
 import numpy as np
 
-from detect import CarDetect
-
-detect = CarDetect()
 
 
-HOST='192.168.12.60'
+HOST='192.168.12.90'
 PORT= 8000
 buffSize=65535
 

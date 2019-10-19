@@ -1,6 +1,9 @@
 import RPi.GPIO as GPIO
 import time
 
+from picamera.array import PiRGBArray
+from picamera import PiCamera
+
 from move import CarMove
 from ultrasound import CarUltrasound
 from infrared import CarInfrared
@@ -34,11 +37,7 @@ if __name__ == '__main__':
 
             [left_measure, right_measure] = car.InfraredMeasure()
 
-            frame = car.VideoRecording()
-            car.VideoTransmission(frame)
-
             # decison-making
-
             if (start_time is None) or (time.time() - start_time >  0.5):
                 start_time = None
                 if left_measure == 0 and right_measure == 1:
