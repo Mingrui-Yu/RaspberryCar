@@ -9,7 +9,8 @@ import pdb
 class CarDetect(object):
     def __init__(self):
         self.lower_range = np.array([25, 0, 0])  # the HSV range of tennis color
-        self.higher_range = np.array([45, 255, 255])
+        self.higher_range = np.array([50, 255, 255])
+        self.cut_edge = 260
         pass
 
 
@@ -18,6 +19,7 @@ class CarDetect(object):
         y_pos = 0
         radius = 0
         img_out = copy.copy(img)
+        img = img[self.cut_edge:479, :, :]
         img = cv2.blur(img, (5,5))  # denoising
         hsv_img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)  # rgb to HSV
 
@@ -45,17 +47,17 @@ class CarDetect(object):
                     tennis_color_mask = cv2.inRange(detect_area, self.lower_range, self.higher_range)
                     num_point = np.sum(tennis_color_mask / 255)
                     rate[i] = num_point / (height * width)              
-                    # img_out = cv2.circle(img_out, (x[i], y[i]), r[i], (0,255,0), thickness=2)
+                    img_out = cv2.circle(img_out, (x[i], y[i]+self.cut_edge), r[i], (0,255,0), thickness=2)
                     
             i = np.argmax(rate)  # select the circle with the maximum rate as the detected tennis
-            if rate[i] > 0.5:   # if the percent of tennis_color_point in detect_area > 50%, then regard it as the tennis
+            if rate[i] > 0.4:   # if the percent of tennis_color_point in detect_area > 50%, then regard it as the tennis
                 x_pos = x[i]
                 y_pos = y[i]
                 radius = r[i]
             print('x: ', x[i], '  y: ', y[i], '  r: ', r[i], '   rate: ', rate[i])
 
         if VideoReturn:  # if it needs to return the frame with the detected tennis
-            img_out = cv2.circle(img_out, (x_pos, y_pos), radius, (0,0,255), thickness=10)
+            img_out = cv2.circle(img_out, (x_pos, y_pos+self.cut_edge), radius, (0,0,255), thickness=10)
             return img_out, x_pos, y_pos, radius
         else:  # if it only needs to return the position of the detected tennis
             return x_pos, y_pos, radius
