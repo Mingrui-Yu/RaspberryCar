@@ -18,6 +18,18 @@ GPIO.setwarnings(False)  # Disable warning
 GPIO.setmode(GPIO.BCM)  # BCM coding
 
 
+# # 远程调试用代码,如果不使用pycharm进行调试，请注释该段代码
+# import sys
+#
+# sys.path.append("pydevd_pycharm.egg")
+# import pydevd_pycharm
+#
+# pydevd_pycharm.settrace('192.168.12.162', port=20000, stdoutToServer=True, stderrToServer=True)
+#
+#
+# # =======================
+
+
 class CarState(Enum):
     stop = 0
     go = 1
@@ -84,8 +96,21 @@ if __name__ == '__main__':
                 near_center, medium_center, far_center = car.LineTrack(frame_origin, VideoReturn)
 
             if near_center < 0:
-                car.state = CarState.stop
-            elif far_center < 0:
+                if medium_center < 0:
+                    if far_center < 280:
+                        car.state = CarState.left
+                    elif far_center < 360:
+                        car.state = CarState.go
+                    else:
+                        car.state = CarState.right
+                else:
+                    if medium_center < 280:
+                        car.state = CarState.left
+                    elif medium_center < 360:
+                        car.state = CarState.go
+                    else:
+                        car.state = CarState.right
+            elif far_center < 0 or medium_center < 0:
                 if near_center < 280:
                     car.state = CarState.left
                 elif near_center < 360:
@@ -93,9 +118,10 @@ if __name__ == '__main__':
                 else:
                     car.state = CarState.right
             else:
-                near_bias, near_list = center_refresh(near_list, near_center, near_index)
-                medium_bias, medium_list = center_refresh(medium_list, medium_center, medium_index)
-                far_bias, far_list = center_refresh(far_list, far_center, far_index)
+                # 效果不佳
+                # near_bias, near_list = center_refresh(near_list, near_center, near_index)
+                # medium_bias, medium_list = center_refresh(medium_list, medium_center, medium_index)
+                # far_bias, far_list = center_refresh(far_list, far_center, far_index)
 
                 # the circumscribed circle of triangle
                 a = np.sqrt((near_center - medium_center) ** 2 + (car.near_pos - car.medium_pos) ** 2)
@@ -106,55 +132,55 @@ if __name__ == '__main__':
 
                 # use radius to help car get better control
                 if r > 400:
-                    if abs(far_bias) < 40:
+                    if abs(far_center - 320) < 40:
                         car.state = CarState.fast_go
-                    elif far_bias > 0:
+                    elif far_center - 320 > 0:
                         car.state = CarState.light_right
                     else:
                         car.state = CarState.light_left
                 elif r < 100:
-                    if abs(far_bias) < 40:
+                    if abs(far_center - 320) < 40:
                         car.state = CarState.go
-                    elif far_bias > 200:
+                    elif far_center - 320 > 200:
                         car.state = CarState.heavy_right
-                    elif far_bias > 0:
+                    elif far_center - 320 > 0:
                         car.state = CarState.right
-                    elif far_bias < -200:
+                    elif far_center - 320 < -200:
                         car.state = CarState.heavy_left
-                    elif far_bias < 0:
+                    elif far_center - 320 < 0:
                         car.state = CarState.left
                 else:
-                    if abs(far_bias) < 40:
+                    if abs(far_center - 320) < 40:
                         car.state = CarState.go
-                    elif far_bias > 0:
+                    elif far_center - 320 > 0:
                         car.state = CarState.right
                     else:
                         car.state = CarState.left
 
             # take control of car
             if car.state == CarState.stop:
-                car.forward(0)
+                car.brake()
             elif car.state == CarState.go:
                 car.forward(30)
             elif car.state == CarState.fast_go:
-                car.forward(100)
+                car.forward(50)
             elif car.state == CarState.light_left:
-                car.left(10)
+                car.left(30)
             elif car.state == CarState.left:
-                car.left(25)
+                car.left(50)
             elif car.state == CarState.heavy_left:
-                car.left(60)
+                car.left(70)
             elif car.state == CarState.light_right:
-                car.right(10)
+                car.right(30)
             elif car.state == CarState.right:
-                car.right(25)
+                car.right(50)
             elif car.state == CarState.heavy_right:
-                car.right(60)
+                car.right(70)
 
             rawCapture.truncate(0)  # PiCamera必备
 
             mfps = 1 / (time.time() - t_start)  # 计算FPS
-            print('FPS: ', mfps, ', r: ', r, ', state: ', car.state)
+            print('FPS: ', mfps, 'state: ', car.state)
 
 
 

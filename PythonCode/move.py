@@ -10,7 +10,6 @@ GPIO.setmode(GPIO.BCM)
 
 class CarMove(object):
     def __init__(self):
-        
         GPIO_motor_1 = 18  # GPIO setting (BCM coding)
         GPIO_motor_4 = 23
         GPIO_motor_5 = 24
@@ -30,7 +29,6 @@ class CarMove(object):
         self.motor_4.start(0)
         self.motor_5.start(0)
         self.motor_6.start(0)
-
 
     def forward(self, speed):
         self.motor_1.ChangeDutyCycle(speed)  # set the duty circle (range: 0~100)
@@ -68,15 +66,20 @@ class CarMove(object):
         self.motor_5.stop()
         self.motor_6.stop()
 
+    def track_move_left(self, speed, diff):
+        self.motor_1.ChangeDutyCycle(40)
+        self.motor_4.ChangeDutyCycle(20)
+        self.motor_5.ChangeDutyCycle(20)
+        self.motor_6.ChangeDutyCycle(40)
+
 
 if __name__ == '__main__':
     try:
         car = CarMove()
-        while(True):
-            car.forward(50)
+        while (True):
+            car.track_move_left(40,10)
 
     except KeyboardInterrupt:
         print("Measurement stopped by User")
         car.MotorStop()
         GPIO.cleanup()
-
