@@ -19,8 +19,7 @@ from detect import CarDetect
 
 
 GPIO.setwarnings(False)  # Disable warning
-GPIO.setmode(GPIO.BCM)  # BCM coding 
-
+GPIO.setmode(GPIO.BCM)  # BCM coding
 
 class Car(CarMove, CarUltrasound, CarInfrared, CarCamera, CarDetect):  # create class Car, which derives all the modules
     def __init__(self):
@@ -39,6 +38,9 @@ class Car(CarMove, CarUltrasound, CarInfrared, CarCamera, CarDetect):  # create 
 if __name__ == '__main__':
     try:
         car = Car() 
+
+        fourcc = cv2.VideoWriter_fourcc(*'XVID')
+        video_out = cv2.VideoWriter('out.mp4', fourcc, 0.8, (640, 480))
 
         ##### Prepare for the tensorflow object detection API  #####
         MODEL_NAME = 'ssdlite_mobilenet_v2_coco_2018_05_09'  # 使用的模型
@@ -100,6 +102,8 @@ if __name__ == '__main__':
                             line_thickness=8)   # 在frame上画框（检测结果）
 
                     car.VideoTransmission(frame)  # 向PC传输视频帧
+                    video_out.write(frame)
+
 
                     rawCapture.truncate(0)  # PiCamera必备
 
@@ -110,3 +114,4 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         print("Measurement stopped by User")
         car.AllStop()
+        video_out.release()

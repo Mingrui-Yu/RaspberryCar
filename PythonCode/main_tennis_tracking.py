@@ -35,9 +35,13 @@ if __name__ == '__main__':
     try:
         car = Car() 
 
+        fourcc = cv2.VideoWriter_fourcc(*'XVID')
+        video_out = cv2.VideoWriter('out.mp4', fourcc, 10, (640, 480))
+
         VideoReturn = True  #  return the detected_frame, and transmit the frames to PC
         radius_mov_ave = 35
         x_mov_ave = 320
+        turn_speed = 60
 
         camera, rawCapture = car.CameraInit()  # Initialize the PiCamera
 
@@ -49,6 +53,7 @@ if __name__ == '__main__':
             if VideoReturn:  # detect the tennis & transmit the frames to PC
                 frame_detect, x_pos, y_pos, radius = car.TennisDetect(frame_origin, VideoReturn)
                 car.VideoTransmission(frame_detect)
+                video_out.write(frame_detect)
             else:
                 x_pos, y_pos, radius = car.TennisDetect(frame_origin, VideoReturn)
                 # car.VideoTransmission(frame_origin)
@@ -58,8 +63,8 @@ if __name__ == '__main__':
             if radius == 0:  # radius ==0 means it hasn't found the tennis
                 pass
             else:
-                radius_mov_ave = 0.2*radius + 0.8*radius_mov_ave  # use the moving average  to reduce the error
-                x_mov_ave = 0.2*x_pos + 0.8*x_mov_ave
+                radius_mov_ave = 0.4*radius + 0.6*radius_mov_ave  # use the moving average  to reduce the error
+                x_mov_ave = 0.4*x_pos + 0.6*x_mov_ave
 
 
             ##### decision making #####
@@ -83,23 +88,23 @@ if __name__ == '__main__':
 
             if ForB is 'Brake':
                 if LorR is 'Left':
-                    car.left(60)
+                    car.left(turn_speed)
                 elif LorR is 'Right':
-                    car.right(60)
+                    car.right(turn_speed)
                 elif LorR is 'Brake':
                     car.brake()
             elif ForB is 'Forward':
                 if LorR is 'Left':
-                    car.left(60)
+                    car.left(turn_speed)
                 elif LorR is 'Right':
-                    car.right(60)
+                    car.right(turn_speed)
                 elif LorR is 'Brake':
-                    car.forward(40)
+                    car.forward(50)
             elif ForB is 'Backward':
                 if LorR is 'Left':
-                    car.left(60)
+                    car.left(turn_speed)
                 elif LorR is 'Right':
-                    car.right(60)
+                    car.right(turn_speed)
                 elif LorR is 'Brake':
                     car.back(40)
 
@@ -114,3 +119,4 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         print("Measurement stopped by User")
         car.AllStop()
+        video_out.release()
