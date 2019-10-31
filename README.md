@@ -247,7 +247,57 @@ python调用摄像头有两种方式：
 
 识别并定位摄像头图像中的各类常见物体。
 
-主程序为main_object_detection.py，其调用了TensorFlow Object Detection API，使用了训练好的的SSDLite目标检测模型，在树莓派端进行目标检测
+![目标检测效果](https://i.loli.net/2019/10/31/i5eEZzuatg6jD2G.gif)
+
+主程序为main_object_detection.py，其调用了[TensorFlow Object Detection API](https://github.com/tensorflow/models/tree/master/research/object_detection)，使用了训练好的的SSDLite目标检测模型，在树莓派端进行目标检测
 。
 
-![目标检测效果](https://i.loli.net/2019/10/31/i5eEZzuatg6jD2G.gif)
+TensorFlow安装方法及TensorFlow Object Detection API配置方法可以完全参考此文档：[EdjeElectronics/Tutorial to set up TensorFlow Object Detection API on the Raspberry Pi](https://github.com/EdjeElectronics/TensorFlow-Object-Detection-on-the-Raspberry-Pi#tutorial-to-set-up-tensorflow-object-detection-api-on-the-raspberry-pi)
+
+或者TensorFlow Object Detection API可以直接clone这位的 [xyc2690/Raspberry_ObjectDetection_Camera](https://github.com/xyc2690/Raspberry_ObjectDetection_Camera)，可以不用配置TensorFlow Object Detection API，下载即用。
+
+我们使用的SSDLite模型主要优点是运行速度快、占用内存小，适合在树莓派端进行运算。据我们测试，帧率大概为0.8帧/s。我们使用的是树莓派3，如果是更新的型号，速度会更快一点。
+
+### 网球追踪
+基于摄像头，使小车追踪一个移动的网球，并与网球保持一定距离。
+
+![网球追踪效果](https://i.loli.net/2019/10/31/SpHzE7MBRfkr5aN.gif)
+
+主程序在main_tennis_tracking.py中，网球追踪流程大概如下：
+* 网球检测
+  * 图像预处理
+  * 霍夫圆检测 [霍夫圆检测原理](https://github.com/Mingrui-Yu/Tutorials/blob/master/Rapberry_Pi/%E7%BD%91%E7%90%83%E8%BF%BD%E8%B8%AA%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86.md#%E9%9C%8D%E5%A4%AB%E5%9C%86%E6%A3%80%E6%B5%8B)
+  * HSV域颜色检测 [HSV变换原理](https://github.com/Mingrui-Yu/Tutorials/blob/master/Rapberry_Pi/%E7%BD%91%E7%90%83%E8%BF%BD%E8%B8%AA%E6%8A%80%E6%9C%AF%E5%8E%9F%E7%90%86.md#hsv%E5%8F%98%E6%8D%A2)
+* 运动控制
+  * 运动决策
+  * 电机控制
+
+实验显示：
+在不同光照条件下，网球的色调(H)基本上保持一致，范围大致在25~50 (OpenCV范围)，在可靠明亮的光照条件下，范围大致在30~40。
+
+网球检测的程序在detect_new.py中，具体流程如下：
+* 关注区域裁切：裁掉不可能出现网球的区域
+* 高斯滤波：去除一定噪声
+* 霍夫圆检测：检测出图像中所有可能存在的圆（视频中的绿色圆）
+* 针对每个检测出的圆的内切正方形：
+    * RGB to HSV
+    * 利用HSV域计算符合网球颜色的像素点数目
+    * 统计上述像素点数目占比
+* 选出占比最大的圆，若其占比大于设定阈值，则认为是网球（视频中的红色圆）
+
+![网球检测效果](https://i.loli.net/2019/10/31/OEKz3HRPcVj1ydQ.gif)
+
+经测试，帧率大概在15帧/s。
+
+
+运动控制的程序在main_tennis_tracking.py中，具体流程如下：
+* 移动平均：对检测得网球位置进行移动平均，减小误差
+* 决策：根据当前网球相对于小车的位置，决策下一步的动作
+    * 根据网球x坐标决策转向动作
+    * 根据网球半径r决策前进后退动作
+* 控制：根据决策结果，控制小车电机输出
+
+目前存在的问题：
+* 我们使用的小车是4电机四驱差速转向小车，但在没有细致调教的差速控制算法的情况下，这样的配置使得在小车在转弯的时候存在较大的滑动摩擦(a skidding turn)，所以转向时小车存在一个“最低启动速度”，当PWM的占空比小于一定值时，小车由于摩擦力的原因无法真的转起来，在原地“蹩着”，所以要小车转起来，只能给一个相对大的速度，这样就很容易转向过度。
+* 同时，由于摩擦力，小车在转向时也存在明显的车身抖动，使得转向时拍摄的图像发飘发糊，导致此时网球检测得效果也收到影响，进一步影响了转向追网球的准确性。
+* 网球检测的效果受光照的影响还是挺大的，白天光照充足的环境下（白天室外）效果会好很多。
