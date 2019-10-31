@@ -178,7 +178,7 @@ NOTICE:
 
 电机相关代码在move.py内。需要注意GPIO端口号的设置，python用的是BCM编码。
 
-![树莓派GPIO编号图](https://github.com/Mingrui-Yu/PicturesGitHub/blob/master/RaspberryCar/%E6%A0%91%E8%8E%93%E6%B4%BEGPIO%E6%8E%A5%E5%8F%A3.png?raw=true)
+![树莓派GPIO编号图](https://github.com/Mingrui-Yu/PicturesGitHub/blob/master/RaspberryCar/%E6%A0%91%E8%8E%93%E6%B4%BEGPIO%E6%8E%A5%E5%8F%A3.png)
 
 在move.py中，定义了前进、后退、左转、右转、停车功能。转弯是通过左右轮差速实现的。
 
@@ -249,4 +249,4 @@ python调用摄像头有两种方式：
 主程序为main_object_detection.py，其调用了TensorFlow Object Detection API，使用了训练好的的SSDLite目标检测模型，在树莓派端进行目标检测
 。
 
-![目标检测效果](https://github.com/Mingrui-Yu/PicturesGitHub/blob/master/RaspberryCar/object_detection.gif?raw=true)
+![目标检测效果](https://github.com/Mingrui-Yu/PicturesGitHub/blob/master/RaspberryCar/object_detection.gif)
