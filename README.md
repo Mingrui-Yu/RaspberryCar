@@ -25,7 +25,7 @@ python 3
 
 RPi.GPIO
 
-opencv   [How to install](https://github.com/Mingrui-Yu/Tutorials/blob/master/Rapberry_Pi/opencv_python.md#%E5%9C%A8%E6%A0%91%E8%8E%93%E6%B4%BE%E4%B8%8A%E5%AE%89%E8%A3%85%E5%9F%BA%E4%BA%8Epython%E7%9A%84opencv)
+opencv
 
 picamera
 
@@ -61,7 +61,6 @@ Enter the following commands in Pi Terminal:
 cd PythonCode
 python3 main_trace_test.py
 ```
-循迹传感器可以正常工作，寻迹逻辑还未进行测试
 
 ### Video recording & Video transmittion from Pi to PC
 
@@ -80,7 +79,7 @@ Has been tested.
 
 ### Tennis Tracking
 
-The car will first detect the tennis based on its camera (finished and tested), then it will move to track the tennis (work in next).
+The car will first detect the tennis based on its camera, then it will move to track the tennis.
 
 Enter the following commands in Pi Terminal:
 ```
@@ -96,10 +95,9 @@ python3 pc_reciever.py
 ### Object Detection
 Based on TensorFLow Object Detection API, using the 'ssdlite_mobilenet_v2_coco_2018_05_09' pre-trained model. 
 
-(相关支持已经上传至树莓派PythonCode文件夹，所以不再上传至此repository)
+(NOTICE: TensorFlow Object Detection API and the ssdlite model are not contained in the repo. See here to install them [EdjeElectronics/Tutorial to set up TensorFlow Object Detection API on the Raspberry Pi](https://github.com/EdjeElectronics/TensorFlow-Object-Detection-on-the-Raspberry-Pi#tutorial-to-set-up-tensorflow-object-detection-api-on-the-raspberry-pi))
 
-NOTICE:
-相关支持已经上传至树莓派PythonCode文件夹，所以再上传代码的时候小心，不要把相关支持覆盖了。
+
 
 ## Notes
 [All tutorials on Raspberry-Pi | GitHub](https://github.com/Mingrui-Yu/Tutorials/tree/master/Rapberry_Pi)
@@ -247,7 +245,9 @@ python调用摄像头有两种方式：
 
 识别并定位摄像头图像中的各类常见物体。
 
-![目标检测效果](https://i.loli.net/2019/10/31/i5eEZzuatg6jD2G.gif)
+![目标检测效果](doc/object_detection.gif)
+
+
 
 主程序为main_object_detection.py，其调用了[TensorFlow Object Detection API](https://github.com/tensorflow/models/tree/master/research/object_detection)，使用了训练好的的SSDLite目标检测模型，在树莓派端进行目标检测
 。
