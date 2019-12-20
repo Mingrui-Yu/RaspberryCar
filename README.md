@@ -95,30 +95,25 @@ python3 pc_reciever.py
 ### Object Detection
 Based on TensorFLow Object Detection API, using the 'ssdlite_mobilenet_v2_coco_2018_05_09' pre-trained model. 
 
+Enter the following commands in Pi Terminal:
+```
+cd PythonCode
+python3 main_object_detection.py
+```
+
 (NOTICE: TensorFlow Object Detection API and the ssdlite model are not contained in the repo. See here to install them [EdjeElectronics/Tutorial to set up TensorFlow Object Detection API on the Raspberry Pi](https://github.com/EdjeElectronics/TensorFlow-Object-Detection-on-the-Raspberry-Pi#tutorial-to-set-up-tensorflow-object-detection-api-on-the-raspberry-pi))
 
 
 
-## Notes
-[All tutorials on Raspberry-Pi | GitHub](https://github.com/Mingrui-Yu/Tutorials/tree/master/Rapberry_Pi)
 
-* [创建wifi热点&开启SSH](https://github.com/Mingrui-Yu/Tutorials/blob/master/Rapberry_Pi/%E5%88%9B%E5%BB%BAwifi%E7%83%AD%E7%82%B9%26%E5%BC%80%E5%90%AFSSH%26putty%E8%BF%9E%E6%8E%A5.md#pi3-%E5%88%9B%E5%BB%BAwifi%E7%83%AD%E7%82%B9--%E5%BC%80%E5%90%AFssh--putty%E8%BF%9E%E6%8E%A5)
-
-* [相机&opencv-python](https://github.com/Mingrui-Yu/Tutorials/blob/master/Rapberry_Pi/%E7%9B%B8%E6%9C%BA%26opencv_python.md#%E5%9C%A8%E6%A0%91%E8%8E%93%E6%B4%BE%E4%B8%8A%E5%AE%89%E8%A3%85%E5%9F%BA%E4%BA%8Epython%E7%9A%84opencv)
-
-* [更换下载源](https://github.com/Mingrui-Yu/Tutorials/blob/master/Rapberry_Pi/%E6%9B%B4%E6%8D%A2%E4%B8%8B%E8%BD%BD%E6%BA%90.md#%E5%88%87%E6%8D%A2%E5%88%B0%E5%9B%BD%E5%86%85%E7%9A%84apt-get%E4%B8%8B%E8%BD%BD%E6%BA%90)
-
-* [TensorFlow相关](https://github.com/Mingrui-Yu/Tutorials/blob/master/Rapberry_Pi/%E5%AE%89%E8%A3%85tensorflow.md#tensorflow-%E5%AE%89%E8%A3%85)
-
-* [直流电机 & H桥 & PWM](https://github.com/Mingrui-Yu/Tutorials/blob/master/Rapberry_Pi/%E7%9B%B4%E6%B5%81%E7%94%B5%E6%9C%BA%E7%9B%B8%E5%85%B3.md#%E7%9B%B4%E6%B5%81%E7%94%B5%E6%9C%BA%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86)
-
-* [超声波传感器相关](https://github.com/Mingrui-Yu/Tutorials/blob/master/Rapberry_Pi/%E8%B6%85%E5%A3%B0%E6%B3%A2%E4%BC%A0%E6%84%9F%E5%99%A8.md#%E8%B6%85%E5%A3%B0%E6%B3%A2%E4%BC%A0%E6%84%9F%E5%99%A8%E7%9B%B8%E5%85%B3)
 
 ***
 
 ## 简介
 
 本项目是学校项目设计课程内的项目，要求是使用一个基于树莓派的小车来实现一些简单的功能。
+
+本项目适合初次接触树莓派，希望利用树莓派及小车配件实现一些简单功能的同学们。
 
 目前我们实现的功能有：
 * 自动避障：基于超声波和红外，使小车在运行过程中不会撞上障碍物；
@@ -130,9 +125,32 @@ Based on TensorFLow Object Detection API, using the 'ssdlite_mobilenet_v2_coco_2
 
 本项目选用Python作为编程语言，有几点原因：Python相比较C语言更简明；我们对Python的掌握情况更好一些（C语言没学好啊）；方便之后使用tensorflow做一些深度学习的功能。但同时带来的缺点就是运行速度会差一点。
 
-下面我们会对小车配置、功能实现和使用方法进行详细的介绍。
+下面我们会对小车配置、功能实现和使用方法进行详细的介绍。本文结构如下：
+* 配置要求
+* 项目架构
+* 准备工作
+* 硬件调试
+* 功能实现（原理介绍）
+* 功能实现（使用教程）
 
-### 整体架构
+
+若想成功实现本项目的功能，请:
+* 首先确保完成**准备工作**
+* 之后进行**硬件调试**
+* 之后在阅读过**功能实现-原理介绍**的基础上
+* 根据**功能实现-使用教程**来运行相应程序、实现功能
+
+
+## 配置要求
+* 树莓派3
+* 驱动板（L298N）
+* CSI摄像头
+* 超声波测距传感器
+* 红外避障传感器
+* 小车车体 + 4个电机
+* 电脑 (Ubuntu18.04)
+
+## 项目架构
 
 我们的源代码全部放在PythonCode文件夹内。
 
@@ -168,6 +186,8 @@ Based on TensorFLow Object Detection API, using the 'ssdlite_mobilenet_v2_coco_2
 
 ## 硬件调试
 
+首先需要确定树莓派、驱动板、传感器之间的连线是正确的。
+
 ### 电机
 [直流电机相关知识](https://github.com/Mingrui-Yu/Tutorials/blob/master/Rapberry_Pi/%E7%9B%B4%E6%B5%81%E7%94%B5%E6%9C%BA%E7%9B%B8%E5%85%B3.md#%E7%9B%B4%E6%B5%81%E7%94%B5%E6%9C%BA%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86)
 * 工作原理
@@ -196,7 +216,7 @@ Based on TensorFLow Object Detection API, using the 'ssdlite_mobilenet_v2_coco_2
 
 ### 摄像头
 
-调用摄像头需要先在```在 sudo raspi-config```中启用Camera，然后重启。
+调用摄像头需要先在``` sudo raspi-config ```中启用Camera，然后重启。
 
 python调用摄像头有两种方式：
 * 使用picamera
@@ -213,7 +233,7 @@ python调用摄像头有两种方式：
 另外注意，程序终止是一定要关闭摄像机（camera.close()），否则下次无法正常打开。
 
 
-## 功能实现
+## 功能实现（原理介绍）
 
 ### 自动避障
 
@@ -246,8 +266,6 @@ python调用摄像头有两种方式：
 识别并定位摄像头图像中的各类常见物体。
 
 ![目标检测效果](doc/object_detection.gif)
-
-
 
 主程序为main_object_detection.py，其调用了[TensorFlow Object Detection API](https://github.com/tensorflow/models/tree/master/research/object_detection)，使用了训练好的的SSDLite目标检测模型，在树莓派端进行目标检测
 。
@@ -301,3 +319,73 @@ TensorFlow安装方法及TensorFlow Object Detection API配置方法可以完全
 * 我们使用的小车是4电机四驱差速转向小车，但在没有细致调教的差速控制算法的情况下，这样的配置使得在小车在转弯的时候存在较大的滑动摩擦(a skidding turn)，所以转向时小车存在一个“最低启动速度”，当PWM的占空比小于一定值时，小车由于摩擦力的原因无法真的转起来，在原地“蹩着”，所以要小车转起来，只能给一个相对大的速度，这样就很容易转向过度。
 * 同时，由于摩擦力，小车在转向时也存在明显的车身抖动，使得转向时拍摄的图像发飘发糊，导致此时网球检测得效果也收到影响，进一步影响了转向追网球的准确性。
 * 网球检测的效果受光照的影响还是挺大的，白天光照充足的环境下（白天室外）效果会好很多。
+
+
+## 功能实现（使用教程）
+
+
+
+### 自动避障
+在树莓派终端中输入：
+```
+cd PythonCode
+python3 main_obstacle_avoidance.py
+```
+
+### 实时图像传输
+树莓派发送图像，在树莓派终端输入：
+```
+cd PythonCode
+python3 camera.py
+```
+同时，如果想在PC端接受图像，在PC终端输入：
+```
+cd PythonCode
+python3 pc_reciever.py
+```
+NOTICE：camera.py和pc_receiver.py均需要根据具体情况配置HOST和POST：
+* 二者中的HOST均为PC在此WiFi网络下的IP地址（通过ifconfig查看）
+* 二者的PORT设置为同一个端口号就可以（eg：8000）。
+
+### 目标检测
+在树莓派终端中输入：
+```
+cd PythonCode
+python3 main_object_detection.py
+```
+如果想在PC端接受图像，则在PC终端输入：
+```
+cd PythonCode
+python3 pc_reciever.py
+```
+NOTICE：Tensorflow Object Detection API 和 ssdlite模型并未上传至此仓库，需要自行安装。二者的安装和配置方法请参考此文档：[EdjeElectronics/Tutorial to set up TensorFlow Object Detection API on the Raspberry Pi](https://github.com/EdjeElectronics/TensorFlow-Object-Detection-on-the-Raspberry-Pi#tutorial-to-set-up-tensorflow-object-detection-api-on-the-raspberry-pi)
+; 或者TensorFlow Object Detection API可以直接clone这位的 [xyc2690/Raspberry_ObjectDetection_Camera](https://github.com/xyc2690/Raspberry_ObjectDetection_Camera)，可以不用配置TensorFlow Object Detection API，下载即用。
+
+### 网球追踪
+
+在树莓派终端输入：
+```
+cd PythonCode
+python3 main_tennis_tracking.py
+```
+如果想在PC端接受图像，则在PC终端输入：
+```
+cd PythonCode
+python3 pc_reciever.py
+```
+
+
+## Notes
+[All tutorials on Raspberry-Pi | GitHub](https://github.com/Mingrui-Yu/Tutorials/tree/master/Rapberry_Pi)
+
+* [创建wifi热点&开启SSH](https://github.com/Mingrui-Yu/Tutorials/blob/master/Rapberry_Pi/%E5%88%9B%E5%BB%BAwifi%E7%83%AD%E7%82%B9%26%E5%BC%80%E5%90%AFSSH%26putty%E8%BF%9E%E6%8E%A5.md#pi3-%E5%88%9B%E5%BB%BAwifi%E7%83%AD%E7%82%B9--%E5%BC%80%E5%90%AFssh--putty%E8%BF%9E%E6%8E%A5)
+
+* [相机&opencv-python](https://github.com/Mingrui-Yu/Tutorials/blob/master/Rapberry_Pi/%E7%9B%B8%E6%9C%BA%26opencv_python.md#%E5%9C%A8%E6%A0%91%E8%8E%93%E6%B4%BE%E4%B8%8A%E5%AE%89%E8%A3%85%E5%9F%BA%E4%BA%8Epython%E7%9A%84opencv)
+
+* [更换下载源](https://github.com/Mingrui-Yu/Tutorials/blob/master/Rapberry_Pi/%E6%9B%B4%E6%8D%A2%E4%B8%8B%E8%BD%BD%E6%BA%90.md#%E5%88%87%E6%8D%A2%E5%88%B0%E5%9B%BD%E5%86%85%E7%9A%84apt-get%E4%B8%8B%E8%BD%BD%E6%BA%90)
+
+* [TensorFlow相关](https://github.com/Mingrui-Yu/Tutorials/blob/master/Rapberry_Pi/%E5%AE%89%E8%A3%85tensorflow.md#tensorflow-%E5%AE%89%E8%A3%85)
+
+* [直流电机 & H桥 & PWM](https://github.com/Mingrui-Yu/Tutorials/blob/master/Rapberry_Pi/%E7%9B%B4%E6%B5%81%E7%94%B5%E6%9C%BA%E7%9B%B8%E5%85%B3.md#%E7%9B%B4%E6%B5%81%E7%94%B5%E6%9C%BA%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86)
+
+* [超声波传感器相关](https://github.com/Mingrui-Yu/Tutorials/blob/master/Rapberry_Pi/%E8%B6%85%E5%A3%B0%E6%B3%A2%E4%BC%A0%E6%84%9F%E5%99%A8.md#%E8%B6%85%E5%A3%B0%E6%B3%A2%E4%BC%A0%E6%84%9F%E5%99%A8%E7%9B%B8%E5%85%B3)
