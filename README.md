@@ -52,16 +52,6 @@ python3 main_obstacle_avoidance.py
 ```
 Has been tested.
 
-### Tracking
-
-Based on infrared sensors.
-
-Enter the following commands in Pi Terminal:
-```
-cd PythonCode
-python3 main_trace_test.py
-```
-
 ### Video recording & Video transmittion from Pi to PC
 
 Enter the following commands in Pi Terminal:
@@ -72,14 +62,30 @@ python3 camera.py
 Besides, if you want to watch the video from PC, then enter the following commands in PC Terminal:
 ```
 cd PythonCode
-python3 pc_reciever.py
+python3 pc_receiver.py
 ```
 
 Has been tested.
 
+### Lane tracking
+The car will drive along the lanes based on camera.
+
+Enter the following commands in Pi Terminal:
+```
+cd PythonCode
+python3 main_lane_tracking.py
+```
+Besides, if you want to watch the video with the detected lanes from PC, then enter the following commands in PC Terminal:
+```
+cd PythonCode
+python3 pc_receiver.py
+```
+
 ### Tennis Tracking
 
 The car will first detect the tennis based on its camera, then it will move to track the tennis.
+
+
 
 Enter the following commands in Pi Terminal:
 ```
@@ -89,7 +95,7 @@ python3 main_tennis_tracking.py
 Besides, if you want to watch the video with the detected result from PC, then enter the following commands in PC Terminal:
 ```
 cd PythonCode
-python3 pc_reciever.py
+python3 pc_receiver.py
 ```
 
 ### Object Detection
@@ -118,8 +124,9 @@ python3 main_object_detection.py
 目前我们实现的功能有：
 * 自动避障：基于超声波和红外，使小车在运行过程中不会撞上障碍物；
 * 实时图像传输：将树莓派摄像头拍摄到的视频流传到PC端，并在PC端查看；
+* 视觉车道循迹：基于视觉，使小车沿车道线行驶；
 * 目标检测：识别并定位摄像头图像中的各类常见物体；
-* 网球追踪：基于摄像头，使小车追踪一个移动的网球，并与网球保持一定距离。
+* 网球追踪：基于视觉，使小车追踪一个移动的网球，并与网球保持一定距离。
 
 学校提供的小车的商家是[慧净电子](http://www.hlmcu.com/)，商家提供了一些使用教程，适合初学，基于C语言，实现了一些简单的红外避障、红外寻迹、超声波避障和摄像头调用。
 
@@ -237,6 +244,8 @@ python调用摄像头有两种方式：
 
 ### 自动避障
 
+![自动避障效果展示](doc/obstacle_avoidance.gif)
+
 基于超声波和红外，使小车在运行过程中不会撞上障碍物。
 
 主程序为main_obstacle_avoidance.py，其思想很简单，超声波传感器测出小车距离前方障碍物的距离，两边的红外传感器测出两边是否有障碍物，根据测量结果进行运动决策和电机控制。
@@ -261,11 +270,35 @@ python调用摄像头有两种方式：
   * 图像解码（cv2.imdecode）
 其中，发送端在树莓派端运行，接收端在PC端运行。二者同时运行。
 
+### 视觉车道循迹
+基于视觉，使小车沿车道线行驶。环境要求为白色的地板，黑色（深色）的车道线。
+
+![视觉车道循迹效果展示](doc/lane_tracking.gif) ![视觉车道循迹效果展示2](doc/lane_tracking2.gif)
+
+主程序为main_lane_tracking.py，其流程大致如下：
+* 车道线检测
+    * 图像二值化，提取车道线
+    * 提取车道线的内侧点：在图像的特定行，从中间向两侧检索，检测到0像素点及为车道线点。图像左半边检测到的点即为左车道线点，右半边检测到的点即为右车道线点。（为防止因各种原因车道线部分缺失，我们选择图像4个行提取4组车道线内侧点）
+* 运动控制
+    * 运动决策
+        * 如果两侧车道线都能检测到，则直行
+        * 如果只能检测到一侧车道线，则有三种情况：
+            * 该侧车道线靠近图像边缘，则还可以继续直行
+            * 该侧车道线靠近图像中央，则急需转弯，原地旋转
+            * 该侧车道线位置适中，则缓慢转弯，在前进中转弯
+        * 如果两侧车道线都检测不到，则维持之前的动作
+    * 电机控制：根据决策结果，控制小车电机输出
+
+在本实验中，车道线检测部分较容易实现，我们发现，在这种简单的环境下，固定阈值的二值化效果比大津法好。另外，因为我们的车道线偏蓝色，我们选择提取图像的R通道进行二值化。检测效果如图：      
+![车道线内侧点提取效果展示](doc/lane_detect.jpg)
+
+运动控制部分相对较为复杂，我们只采用了一个简单的逻辑，效果还可以。
+
 ### 目标检测
 
 识别并定位摄像头图像中的各类常见物体。
 
-![目标检测效果](doc/object_detection.gif)
+![目标检测效果展示](doc/object_detection.gif)
 
 主程序为main_object_detection.py，其调用了[TensorFlow Object Detection API](https://github.com/tensorflow/models/tree/master/research/object_detection)，使用了训练好的的SSDLite目标检测模型，在树莓派端进行目标检测
 。
@@ -321,9 +354,9 @@ TensorFlow安装方法及TensorFlow Object Detection API配置方法可以完全
 * 网球检测的效果受光照的影响还是挺大的，白天光照充足的环境下（白天室外）效果会好很多。
 
 
+
+
 ## 功能实现（使用教程）
-
-
 
 ### 自动避障
 在树莓派终端中输入：
@@ -341,7 +374,7 @@ python3 camera.py
 同时，如果想在PC端接受图像，在PC终端输入：
 ```
 cd PythonCode
-python3 pc_reciever.py
+python3 pc_receiver.py
 ```
 NOTICE：camera.py和pc_receiver.py均需要根据具体情况配置HOST和POST：
 * 二者中的HOST均为PC在此WiFi网络下的IP地址（通过ifconfig查看）
@@ -356,7 +389,7 @@ python3 main_object_detection.py
 如果想在PC端接受图像，则在PC终端输入：
 ```
 cd PythonCode
-python3 pc_reciever.py
+python3 pc_receiver.py
 ```
 NOTICE：Tensorflow Object Detection API 和 ssdlite模型并未上传至此仓库，需要自行安装。二者的安装和配置方法请参考此文档：[EdjeElectronics/Tutorial to set up TensorFlow Object Detection API on the Raspberry Pi](https://github.com/EdjeElectronics/TensorFlow-Object-Detection-on-the-Raspberry-Pi#tutorial-to-set-up-tensorflow-object-detection-api-on-the-raspberry-pi)
 ; 或者TensorFlow Object Detection API可以直接clone这位的 [xyc2690/Raspberry_ObjectDetection_Camera](https://github.com/xyc2690/Raspberry_ObjectDetection_Camera)，可以不用配置TensorFlow Object Detection API，下载即用。
@@ -371,7 +404,7 @@ python3 main_tennis_tracking.py
 如果想在PC端接受图像，则在PC终端输入：
 ```
 cd PythonCode
-python3 pc_reciever.py
+python3 pc_receiver.py
 ```
 
 
