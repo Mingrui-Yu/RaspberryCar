@@ -371,7 +371,7 @@ python3 main_obstacle_avoidance.py
 cd PythonCode
 python3 camera.py
 ```
-同时，如果想在PC端接受图像，在PC终端输入：
+同时，如果想在PC端接收图像，在PC终端输入：
 ```
 cd PythonCode
 python3 pc_receiver.py
@@ -380,13 +380,26 @@ NOTICE：camera.py和pc_receiver.py均需要根据具体情况配置HOST和POST�
 * 二者中的HOST均为PC在此WiFi网络下的IP地址（通过ifconfig查看）
 * 二者的PORT设置为同一个端口号就可以（eg：8000）。
 
+### 视觉车道循迹
+
+在树莓派终端输入：
+```
+cd PythonCode
+python3 main_lane_tracking.py
+```
+如果想在PC端接收车道检测图像，则在PC终端输入：
+```
+cd PythonCode
+python3 pc_receiver.py
+```
+
 ### 目标检测
 在树莓派终端中输入：
 ```
 cd PythonCode
 python3 main_object_detection.py
 ```
-如果想在PC端接受图像，则在PC终端输入：
+如果想在PC端接收图像，则在PC终端输入：
 ```
 cd PythonCode
 python3 pc_receiver.py
@@ -401,7 +414,7 @@ NOTICE：Tensorflow Object Detection API 和 ssdlite模型并未上传至此仓�
 cd PythonCode
 python3 main_tennis_tracking.py
 ```
-如果想在PC端接受图像，则在PC终端输入：
+如果想在PC端接收网球检测图像，则在PC终端输入：
 ```
 cd PythonCode
 python3 pc_receiver.py
