@@ -71,6 +71,9 @@ if __name__ == '__main__':
         speed_high = 60
         speed_low = 0
 
+        ForB = 'Forward'
+        LorR = 'Brake'
+
         camera, rawCapture = car.CameraInit()  # Initialize the PiCamera
         for raw_frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
             frame_origin = raw_frame.array
