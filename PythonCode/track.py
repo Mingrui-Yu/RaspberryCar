@@ -70,13 +70,13 @@ class CarDetect(object):
         img = cv2.blur(img, (5, 5))  # denoising
         gray_img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)  # rgb to gray
 
-        _, dst = cv2.threshold(gray_img, 0, 255, cv2.THRESH_OTSU)  # OTSU binaryzation
+        _, dst = cv2.threshold(gray_img, 70, 255, cv2.THRESH_BINARY)  # OTSU binaryzation
         dst = cv2.dilate(dst, None, iterations=2)  # dilate image to add the white area
         # dst = cv2.erode(dst, None, iterations=6)
 
-        near_line = self.group_consecutives(np.where(dst[self.near_pos] == 255))
-        medium_line = self.group_consecutives(np.where(dst[self.medium_pos] == 255))
-        far_line = self.group_consecutives(np.where(dst[self.far_pos] == 255))
+        near_line = self.group_consecutives(np.where(dst[self.near_pos] == 0))
+        medium_line = self.group_consecutives(np.where(dst[self.medium_pos] == 0))
+        far_line = self.group_consecutives(np.where(dst[self.far_pos] == 0))
 
         near_line = self.denoise(near_line, 'near')
         medium_line = self.denoise(medium_line, 'medium')

@@ -7,7 +7,7 @@ import numpy as np
 
 
 
-HOST='192.168.12.162'
+HOST='192.168.12.90'
 PORT= 8000
 buffSize=65535
 

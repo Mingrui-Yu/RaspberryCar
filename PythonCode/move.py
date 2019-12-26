@@ -60,6 +60,12 @@ class CarMove(object):
         self.motor_5.ChangeDutyCycle(0)
         self.motor_6.ChangeDutyCycle(0)
 
+    def forward_turn(self, speed_left, speed_right):
+        self.motor_1.ChangeDutyCycle(speed_left)
+        self.motor_4.ChangeDutyCycle(0)
+        self.motor_5.ChangeDutyCycle(speed_right)
+        self.motor_6.ChangeDutyCycle(0)
+
     def MotorStop(self):
         self.motor_1.stop()
         self.motor_4.stop()
