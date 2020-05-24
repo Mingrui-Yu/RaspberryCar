@@ -46,3 +46,5 @@ The car will detect and recognize the objects in the frames. Tensorflow Object D
 The car will track the moving tennis ball and keep a certain distance. We first apply Hough circle detection to find the potential positions of the ball, and than transfer the image to HSV domain to confirm the final position by color.
 
 <div align=center><img src="https://i.loli.net/2019/10/31/SpHzE7MBRfkr5aN.gif" width="50%" /></div>
+
+<div align=center><img width="150" height="150" src="https://img-blog.csdn.net/20161028230559575"/></div>
