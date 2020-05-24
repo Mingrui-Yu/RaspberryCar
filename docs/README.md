@@ -25,6 +25,7 @@ Based on ultrasonic and infrared sensors, the car can avoid hitting obstacles wh
 <div align=center><img src="../doc/obstacle_avoidance.gif" width = "50%" /></div
 
 
+
 ### Visual lane tracking
 
 The car will decide its turning and speed according to the lane positions extracted from frames, ensuring running along the lane. The lanes are required to be black (dark), and the environment is required to be white.
@@ -34,11 +35,14 @@ The car will decide its turning and speed according to the lane positions extrac
 <div align=center><img src="../doc/lane_tracking2.gif" width = "50%" /></div
 
 
+
 ### Visual object detection
 
 The car will detect and recognize the objects in the frames. Tensorflow Object Detection API is called and the pre-trained SSDLite model is utilized for implementation. This is running on  Raspberry Pi, so the FPS is only around 0.8/s.
 
 <div align=center><img src="../doc/object_detection.gif" width="50%" /></div>
+
+
 
 ### Visual tennis tracking
 
